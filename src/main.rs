@@ -1,19 +1,30 @@
-use std::io::{stdin};
+use std::io::stdin;
 
+mod config;
+mod error;
+mod names;
 mod parser;
 mod schedule;
-mod names;
-mod error;
 
 fn main() {
-    println!("Enter a cron string to parse:\n");
+    println!("Enter a cron string to parse:");
 
     let mut s = String::new();
 
-    stdin().read_line(&mut s)
+    stdin()
+        .read_line(&mut s)
         .expect("failed to read line from stdin");
 
-    println!("Parsing [{}] ...", s);
+    let s = s.trim();
+    let schedule = parser::parse(s);
 
-    // do some parsing
+    match schedule {
+        Ok(schedule) => {
+            println!("Successfully parsed, schedule is:\n{}", schedule);
+        }
+
+        Err(err) => {
+            println!("Parse error encountered:\n{}", err);
+        }
+    }
 }
